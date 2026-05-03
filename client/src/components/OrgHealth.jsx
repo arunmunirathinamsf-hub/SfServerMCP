@@ -4,14 +4,14 @@ function MetricCard({ label, used, max, unit = '' }) {
   const pct = max ? Math.round((used / max) * 100) : null;
   const color = pct > 80 ? 'bg-red-500' : pct > 50 ? 'bg-yellow-500' : 'bg-green-500';
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-      <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">{label}</p>
-      <p className="text-2xl font-bold text-white">
+    <div className="bg-stone-900 border border-stone-800 rounded-xl p-5">
+      <p className="text-xs text-stone-500 uppercase tracking-wider mb-2">{label}</p>
+      <p className="text-2xl font-bold text-stone-100">
         {used?.toLocaleString()}{unit}
-        {max ? <span className="text-sm text-gray-500 font-normal"> / {max.toLocaleString()}</span> : null}
+        {max ? <span className="text-sm text-stone-500 font-normal"> / {max.toLocaleString()}</span> : null}
       </p>
       {pct !== null && (
-        <div className="mt-3 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+        <div className="mt-3 h-1.5 bg-stone-800 rounded-full overflow-hidden">
           <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
         </div>
       )}
@@ -20,7 +20,7 @@ function MetricCard({ label, used, max, unit = '' }) {
 }
 
 function Skeleton() {
-  return <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 h-28 animate-pulse" />;
+  return <div className="bg-stone-900 border border-stone-800 rounded-xl p-5 h-28 animate-pulse" />;
 }
 
 export default function OrgHealth() {
@@ -44,7 +44,7 @@ export default function OrgHealth() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold text-white mb-4">Org Health</h2>
+      <h2 className="text-lg font-semibold text-stone-100 mb-4">Org Health</h2>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
         {loading ? (
@@ -86,11 +86,11 @@ export default function OrgHealth() {
       {/* Recent Apex Jobs */}
       {!loading && jobs?.records?.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-gray-300 mb-3">Recent Apex Jobs</h3>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+          <h3 className="text-sm font-semibold text-stone-300 mb-3">Recent Apex Jobs</h3>
+          <div className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-800 text-gray-400 text-xs uppercase">
+                <tr className="border-b border-stone-800 text-stone-500 text-xs uppercase">
                   <th className="text-left px-4 py-3">ID</th>
                   <th className="text-left px-4 py-3">Status</th>
                   <th className="text-left px-4 py-3">Type</th>
@@ -99,8 +99,8 @@ export default function OrgHealth() {
               </thead>
               <tbody>
                 {jobs.records.map(j => (
-                  <tr key={j.Id} className="border-b border-gray-800 last:border-0 hover:bg-gray-800/50">
-                    <td className="px-4 py-3 font-mono text-xs text-gray-400">{j.Id.slice(0, 15)}…</td>
+                  <tr key={j.Id} className="border-b border-stone-800 last:border-0 hover:bg-stone-800/50">
+                    <td className="px-4 py-3 font-mono text-xs text-stone-400">{j.Id.slice(0, 15)}…</td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-0.5 rounded text-xs font-medium ${
                         j.Status === 'Completed' ? 'bg-green-900 text-green-300' :
@@ -108,8 +108,8 @@ export default function OrgHealth() {
                         'bg-yellow-900 text-yellow-300'
                       }`}>{j.Status}</span>
                     </td>
-                    <td className="px-4 py-3 text-gray-300">{j.JobType}</td>
-                    <td className="px-4 py-3 text-gray-400">{new Date(j.CreatedDate).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-stone-300">{j.JobType}</td>
+                    <td className="px-4 py-3 text-stone-400">{new Date(j.CreatedDate).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
