@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Anthropic = require('@anthropic-ai/sdk');
-const path = require('path');
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -17,22 +16,17 @@ When the user asks a data question:
 
 Never guess field names. Always verify with describe_object first.`;
 
-// Spawn a fresh MCP client + server subprocess per request.
-// The active SF session is passed to the subprocess via env vars.
-async function withMCPClient(sf, fn) {
+// Connect to the hosted MCP server over SSE (works on Vercel serverless).
+async function withMCPClient(fn) {
   const { Client } = await import('@modelcontextprotocol/sdk/client/index.js');
-  const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client/stdio.js');
+  const { SSEClientTransport } = await import('@modelcontextprotocol/sdk/client/sse.js');
 
-  const transport = new StdioClientTransport({
-    command: 'node',
-    args: [path.join(__dirname, '../../mcp-server/index.js')],
-    env: {
-      ...process.env,
-      SF_ACCESS_TOKEN: sf.access_token,
-      SF_ACTIVE_INSTANCE_URL: sf.instance_url,
-    },
-  });
+  const mcpUrl = new URL(process.env.MCP_SERVER_URL || 'https://sf-cockpit-mcp.fly.dev/sse');
+  if (process.env.MCP_API_KEY) {
+    mcpUrl.searchParams.set('apiKey', process.env.MCP_API_KEY);
+  }
 
+  const transport = new SSEClientTransport(mcpUrl);
   const mcpClient = new Client(
     { name: 'sf-dev-cockpit-web', version: '1.0.0' },
     { capabilities: {} }
@@ -53,7 +47,7 @@ router.post('/ask', async (req, res) => {
   if (!prompt) return res.status(400).json({ error: 'prompt is required' });
 
   try {
-    const result = await withMCPClient(req.sf, async (mcpClient) => {
+    const result = await withMCPClient(async (mcpClient) => {
       // Pull tool definitions live from the MCP server
       const { tools: mcpTools } = await mcpClient.listTools();
 
