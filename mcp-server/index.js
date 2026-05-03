@@ -164,7 +164,7 @@ app.get('/sse', checkApiKey, async (req, res) => {
   await createMcpServer().connect(transport);
 });
 
-app.post('/message', checkApiKey, async (req, res) => {
+app.post('/message', async (req, res) => {
   const transport = transports[req.query.sessionId];
   if (!transport) return res.status(404).json({ error: 'Session not found' });
   await transport.handlePostMessage(req, res, req.body);
